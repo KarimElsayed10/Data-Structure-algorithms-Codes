@@ -1,80 +1,99 @@
-#include <iostream>
-#include <stack>
-
+#include<iostream>
 using namespace std;
-
-const int MAX_VERTICES = 100; // Maximum number of vertices
-
-class Graph
+int partion1(int arr[],int l,int r)
 {
-private:
-    int vertices;
-    int adjacencyMatrix[MAX_VERTICES][MAX_VERTICES];
-
-public:
-    Graph(int vertices);
-    void addEdge(int from, int to);
-    void depthFirstTraversal(int startVertex);
-};
-
-Graph::Graph(int vertices)
-{
-    this->vertices = vertices;
-    // Initialize adjacency matrix with 0s
-    for (int i = 0; i < vertices; ++i)
+    int i=l,j=r;
+    int p=i;
+    while(true)
     {
-        for (int j = 0; j < vertices; ++j)
+        while(arr[p]<=arr[j]&&i!=j)
         {
-            adjacencyMatrix[i][j] = 0;
+            j--;
         }
+        if(i==j)
+        {
+            break;
+        }
+        else if(arr[p]>arr[j])
+        {
+            swap(arr[p],arr[j]);
+            p=j;
+            i++;//1
+        }
+        while(arr[p]>=arr[i]&&i!=j)
+        {
+            i++;
+        }
+        if(i==j)
+        {
+            break;
+        }
+        else if(arr[p]<arr[i])
+        {
+            swap(arr[p],arr[i]);
+            p=i;
+            j--;//2
+        }
+    }
+    return p;
+}
+void quickSort1(int arr[],int l,int r)
+{
+    if(l<r)
+    {
+        int p=partion1(arr,l,r);
+        quickSort1(arr,l,p-1);
+        quickSort1(arr,p+1,r);
+
     }
 }
 
-void Graph::addEdge(int from, int to)
+int partition2(int arr[], int l, int h)
 {
-    adjacencyMatrix[from][to] = 1;
-    adjacencyMatrix[to][from] = 1; // For undirected graph
+    int pivot = arr[l];
+    int i = l+1;
+    int j = h-1;
+    while (i <= j)
+    {
+        while (arr[i] <= pivot)
+        {
+            i++;
+        }
+
+        while (arr[j] > pivot)
+        {
+            j--;
+        }
+        if (i <= j)
+            swap(arr[i], arr[j]);
+    }
+    swap(arr[l], arr[j]);
+    return j;
 }
 
-void Graph::depthFirstTraversal(int startVertex)
+void quickSort2(int arr[], int l, int h)
 {
-    bool visited[MAX_VERTICES] = {false};
-    stack<int> stack;
-
-    visited[startVertex] = true;
-    stack.push(startVertex);
-
-    while (!stack.empty())
+    if (l < h)
     {
-        int currentVertex = stack.top();
-        cout << currentVertex << " ";
-        stack.pop();
+        int p = partition2(arr, l, h);
+        quickSort2(arr, l, p);
+        quickSort2(arr, p + 1, h);
+    }
 
-        for (int i = 0; i < vertices; ++i)
-        {
-            if (adjacencyMatrix[currentVertex][i] && !visited[i])
-            {
-                visited[i] = true;
-                stack.push(i);
-            }
-        }
+}
+
+
+int print(int arr[],int size)
+{
+    for(int i=0; i<size; i++)
+    {
+        cout<<arr[i]<<" ";
     }
 }
-
 int main()
 {
-    Graph graph(6); // Create a graph with 6 vertices
-    graph.addEdge(0, 1);
-    graph.addEdge(0, 2);
-    graph.addEdge(1, 3);
-    graph.addEdge(1, 4);
-    graph.addEdge(2, 4);
-    graph.addEdge(3, 4);
-    graph.addEdge(3, 5);
-    graph.addEdge(4, 5);
-
-    cout << "Depth-First Traversal starting from vertex 0: ";
-    graph.depthFirstTraversal(0);
-
+    int arr[10]= {4,85,6,8,2,4,9,7,3,10};
+    quickSort2(arr,0,9);
+    print(arr,10);
     return 0;
 }
